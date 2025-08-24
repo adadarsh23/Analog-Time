@@ -1,0 +1,20 @@
+{
+  "appName": {
+    "message": "एनालॉग घड़ी एक्सटेंशन"
+  },
+  "appDescription": {
+    "message": "एक न्यूनतम क्रोम एक्सटेंशन जो वास्तविक समय सिंक्रनाइज़ेशन के साथ एक लाइव एनालॉग घड़ी दिखाता है।"
+  },
+  "version": {
+    "message": "1.0.0"
+  },
+  "default_locale": {
+    "message": "hi"
+  },
+  "appAuthor": {
+    "message": "लेखक: आदर्श कुमार"
+  },
+  "appVersion": {
+    "message": "संस्करण 1.0"
+  }
+}

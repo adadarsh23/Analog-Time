@@ -1,0 +1,38 @@
+{
+  "version": 3,
+  "file": "count.js",
+  "sources": ["count.js"],
+  "sourcesContent": [
+    "document.addEventListener('DOMContentLoaded', () => {\n" +
+    "    const display = document.getElementById(\"countup\");\n\n" +
+    "    function formatTime(ms) {\n" +
+    "        const totalSeconds = Math.floor(ms / 1000);\n" +
+    "        const h = String(Math.floor(totalSeconds / 3600)).padStart(2, '0');\n" +
+    "        const m = String(Math.floor((totalSeconds % 3600) / 60)).padStart(2, '0');\n" +
+    "        const s = String(totalSeconds % 60).padStart(2, '0');\n" +
+    "        return `${h}h ${m}m ${s}s`;\n" +
+    "    }\n\n" +
+    "    function updateDisplay() {\n" +
+    "        chrome.runtime.sendMessage({ action: \"getTime\" }, (response) => {\n" +
+    "            if (response && response.elapsed != null) {\n" +
+    "                display.textContent = formatTime(response.elapsed);\n" +
+    "            }\n" +
+    "        });\n" +
+    "    }\n\n" +
+    "    document.getElementById(\"startCountup\").addEventListener(\"click\", () => {\n" +
+    "        chrome.runtime.sendMessage({ action: \"startCount\" });\n" +
+    "    });\n\n" +
+    "    document.getElementById(\"stopCountup\").addEventListener(\"click\", () => {\n" +
+    "        chrome.runtime.sendMessage({ action: \"stopCount\" });\n" +
+    "    });\n\n" +
+    "    document.getElementById(\"resetCountup\").addEventListener(\"click\", () => {\n" +
+    "        chrome.runtime.sendMessage({ action: \"resetCount\" });\n" +
+    "        display.textContent = \"00h 00m 00s\";\n" +
+    "    });\n\n" +
+    "    setInterval(updateDisplay, 1000);\n" +
+    "    updateDisplay();\n" +
+    "});"
+  ],
+  "names": [],
+  "mappings": ""
+}

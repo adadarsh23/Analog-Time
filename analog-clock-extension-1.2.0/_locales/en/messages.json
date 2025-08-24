@@ -1,0 +1,20 @@
+{
+  "appName": {
+    "message": "Analog Clock Extension"
+  },
+  "appDescription": {
+    "message": "A minimal Chrome extension that displays a live analog clock with real-time synchronization."
+  },
+  "version": {
+    "message": "1.0.0"
+  },
+  "default_locale": {
+    "message": "en"
+  },
+  "appAuthor": {
+    "message": "Author: Adarsh kumar"
+  },
+  "appVersion": {
+    "message": "Version 1.0"
+  }
+}

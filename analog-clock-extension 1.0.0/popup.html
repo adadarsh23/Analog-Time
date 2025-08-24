@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>World Clock & Calendar</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="style/popup.css" />
+</head>
+
+<body>
+  <div class="container">
+    <div class="clock">
+      <div class="numbers">
+        <span style="--n:1;">1</span>
+        <span style="--n:2;">2</span>
+        <span style="--n:3;">3</span>
+        <span style="--n:4;">4</span>
+        <span style="--n:5;">5</span>
+        <span style="--n:6;">6</span>
+        <span style="--n:7;">7</span>
+        <span style="--n:8;">8</span>
+        <span style="--n:9;">9</span>
+        <span style="--n:10;">10</span>
+        <span style="--n:11;">11</span>
+        <span style="--n:12;">12</span>
+      </div>
+      <div class="hand hour" id="hour"></div>
+      <div class="hand minute" id="minute"></div>
+      <div class="hand second" id="second"></div>
+      <div class="center-dot"></div>
+    </div>
+    <span id="current-time" class="num"></span>
+
+    <div class="weather-container">
+      <h3>Weather</h3>
+      <div id="weather-info">Loading weather...</div>
+    </div>
+
+    <div class="calendar-container">
+      <div class="calendar-header">
+        <button id="prevMonth" class="nav-button">&lt;</button>
+        <div id="monthYear"></div>
+        <button id="nextMonth" class="nav-button">&gt;</button>
+      </div>
+      <div class="calendar-grid-header">
+        <span>Sun</span>
+        <span>Mon</span>
+        <span>Tue</span>
+        <span>Wed</span>
+        <span>Thu</span>
+        <span>Fri</span>
+        <span>Sat</span>
+      </div>
+      <div id="calendar-days" class="calendar-grid">
+      </div>
+    </div>
+
+    <div class="world-time">
+      <div><b>India:</b> <span id="time-india"></span></div>
+      <div><b>USA (NY):</b> <span id="time-usa"></span></div>
+      <div><b>UK:</b> <span id="time-uk"></span></div>
+      <div><b>Japan:</b> <span id="time-japan"></span></div>
+    </div>
+
+    <div class="countup-container">
+      <h3>Count Time</h3>
+      <div id="countup">00h 00m 00s</div>
+      <button id="startCountup">Start</button>
+      <button id="stopCountup">Stop</button>
+      <button id="resetCountup">Reset</button>
+    </div>
+
+    <a class="link" href="privacy.html" target="_blank">Privacy Settings</a>
+  </div>
+  <script src="js/popup.js"></script>
+  <script src="js/count.js"></script>
+</body>
+
+</html>

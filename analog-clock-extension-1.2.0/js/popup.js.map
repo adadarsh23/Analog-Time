@@ -1,0 +1,131 @@
+{
+  "version": "3",
+  "file": "popup.js",
+  "sources": ["popup.js"],
+  "sourcesContent": [
+    "document.addEventListener('DOMContentLoaded', async () => {\n" +
+    "    const hourHand = document.getElementById('hour');\n" +
+    "    const minuteHand = document.getElementById('minute');\n" +
+    "    const secondHand = document.getElementById('second');\n" +
+    "    const currentTimeIndiaDisplay = document.getElementById('current-time');\n" +
+    "    const timeIndiaDisplay = document.getElementById('time-india');\n" +
+    "    const timeUSADisplay = document.getElementById('time-usa');\n" +
+    "    const timeUKDisplay = document.getElementById('time-uk');\n" +
+    "    const timeJapanDisplay = document.getElementById('time-japan');\n\n" +
+    "    const monthYearDisplay = document.getElementById('monthYear');\n" +
+    "    const calendarDaysGrid = document.getElementById('calendar-days');\n" +
+    "    const prevMonthBtn = document.getElementById('prevMonth');\n" +
+    "    const nextMonthBtn = document.getElementById('nextMonth');\n" +
+    "    const weatherInfoDisplay = document.getElementById('weather-info');\n\n" +
+    "    const OPENWEATHER_API_KEY = '175e45047a98e6a928c0124ff69b9108';\n" +
+    "    let userTimeZone = 'Asia/Kolkata';\n" +
+    "    let userLocationInfo = null;\n" +
+    "    let currentCalendarDate = new Date();\n\n" +
+    "    async function getUserLocationInfo() {\n" +
+    "        try {\n" +
+    "            const res = await fetch('https://ipapi.co/json/');\n" +
+    "            const data = await res.json();\n" +
+    "            if (data && data.timezone) userTimeZone = data.timezone;\n" +
+    "            return data;\n" +
+    "        } catch {\n" +
+    "            userTimeZone = 'Asia/Kolkata';\n" +
+    "            return { city: 'Noida', country_code: 'IN', latitude: 28.57, longitude: 77.32 };\n" +
+    "        }\n" +
+    "    }\n\n" +
+    "    function getTimeParts(timeZone) {\n" +
+    "        const now = new Date();\n" +
+    "        const formatter = new Intl.DateTimeFormat('en-US', {\n" +
+    "            timeZone,\n" +
+    "            hour: '2-digit',\n" +
+    "            minute: '2-digit',\n" +
+    "            second: '2-digit',\n" +
+    "            hour12: true\n" +
+    "        });\n" +
+    "        return formatter.format(now);\n" +
+    "    }\n\n" +
+    "    function getTimeComponents(timeZone) {\n" +
+    "        const now = new Date();\n" +
+    "        const parts = new Intl.DateTimeFormat('en-US', {\n" +
+    "            timeZone,\n" +
+    "            hour: 'numeric',\n" +
+    "            minute: 'numeric',\n" +
+    "            second: 'numeric',\n" +
+    "            hour12: false\n" +
+    "        }).formatToParts(now);\n\n" +
+    "        const get = (type) => +parts.find(p => p.type === type)?.value || 0;\n" +
+    "        return {\n" +
+    "            hours: get('hour'),\n" +
+    "            minutes: get('minute'),\n" +
+    "            seconds: get('second'),\n" +
+    "        };\n" +
+    "    }\n\n" +
+    "    function updateClock() {\n" +
+    "        currentTimeIndiaDisplay.textContent = getTimeParts(userTimeZone);\n" +
+    "        timeIndiaDisplay.textContent = getTimeParts('Asia/Kolkata');\n" +
+    "        timeUSADisplay.textContent = getTimeParts('America/New_York');\n" +
+    "        timeUKDisplay.textContent = getTimeParts('Europe/London');\n" +
+    "        timeJapanDisplay.textContent = getTimeParts('Asia/Tokyo');\n\n" +
+    "        const { hours, minutes, seconds } = getTimeComponents(userTimeZone);\n" +
+    "        const totalMilliseconds = (hours * 3600000) + (minutes * 60000) + (seconds * 1000);\n\n" +
+    "        hourHand.style.transform = `translate(-50%, 0%) rotate(${(totalMilliseconds / 3600000) * 30}deg)`;\n" +
+    "        minuteHand.style.transform = `translate(-50%, 0%) rotate(${(totalMilliseconds / 60000) * 6}deg)`;\n" +
+    "        secondHand.style.transform = `translate(-50%, 0%) rotate(${(totalMilliseconds / 1000) * 6}deg)`;\n\n" +
+    "        requestAnimationFrame(updateClock);\n" +
+    "    }\n\n" +
+    "    async function fetchWeather(location) {\n" +
+    "        try {\n" +
+    "            const { city, country_code, latitude, longitude } = location;\n" +
+    "            const url = `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${OPENWEATHER_API_KEY}&units=metric`;\n" +
+    "            const res = await fetch(url);\n" +
+    "            const data = await res.json();\n" +
+    "            const icon = `http://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`;\n" +
+    "            weatherInfoDisplay.innerHTML = `\n" +
+    "                <img src=\"${icon}\" alt=\"${data.weather[0].description}\">\n" +
+    "                <span>${city}, ${country_code} - ${Math.round(data.main.temp)}°C, ${data.weather[0].description}</span>\n" +
+    "            `;\n" +
+    "        } catch (err) {\n" +
+    "            weatherInfoDisplay.textContent = `Weather load error`;\n" +
+    "        }\n" +
+    "    }\n\n" +
+    "    function renderCalendar(date) {\n" +
+    "        calendarDaysGrid.innerHTML = '';\n" +
+    "        const year = date.getFullYear();\n" +
+    "        const month = date.getMonth();\n" +
+    "        monthYearDisplay.textContent = date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });\n\n" +
+    "        const firstDay = new Date(year, month, 1).getDay();\n" +
+    "        const daysInMonth = new Date(year, month + 1, 0).getDate();\n" +
+    "        const today = new Date(new Date().toLocaleString('en-US', { timeZone: userTimeZone }));\n" +
+    "        const todayDay = today.getDate(), todayMonth = today.getMonth(), todayYear = today.getFullYear();\n\n" +
+    "        for (let i = 0; i < firstDay; i++) {\n" +
+    "            const empty = document.createElement('div');\n" +
+    "            empty.classList.add('empty-day');\n" +
+    "            calendarDaysGrid.appendChild(empty);\n" +
+    "        }\n\n" +
+    "        for (let day = 1; day <= daysInMonth; day++) {\n" +
+    "            const div = document.createElement('div');\n" +
+    "            div.textContent = day;\n" +
+    "            div.classList.add('calendar-day');\n" +
+    "            if (day === todayDay && month === todayMonth && year === todayYear) {\n" +
+    "                div.classList.add('today');\n" +
+    "            }\n" +
+    "            calendarDaysGrid.appendChild(div);\n" +
+    "        }\n" +
+    "    }\n\n" +
+    "    prevMonthBtn.addEventListener('click', () => {\n" +
+    "        currentCalendarDate.setMonth(currentCalendarDate.getMonth() - 1);\n" +
+    "        renderCalendar(currentCalendarDate);\n" +
+    "    });\n\n" +
+    "    nextMonthBtn.addEventListener('click', () => {\n" +
+    "        currentCalendarDate.setMonth(currentCalendarDate.getMonth() + 1);\n" +
+    "        renderCalendar(currentCalendarDate);\n" +
+    "    });\n\n" +
+    "    userLocationInfo = await getUserLocationInfo();\n" +
+    "    fetchWeather(userLocationInfo);\n" +
+    "    renderCalendar(currentCalendarDate);\n" +
+    "    updateClock();\n" +
+    "    setInterval(() => fetchWeather(userLocationInfo), 300000);\n" +
+    "});"
+  ],
+  "names": [],
+  "mappings": ""
+}

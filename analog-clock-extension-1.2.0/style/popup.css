@@ -1,0 +1,759 @@
+@font-face {
+  font-family: 'BitcountProp';
+  src: url('font/BitcountPropSingle_Cursive-Bold.ttf') format('truetype');
+  font-weight: 100 900; /* if it's a variable font */
+  font-style: normal;
+}
+body {
+  margin: 0;
+  margin-top: 15px; /* Adjusted margin to give more space */
+  font-family: 'BitcountProp', sans-serif;
+  background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start; /* Align items to the start to prevent vertical centering taking too much space */
+  min-height: 100vh; /* Use min-height for full viewport height */
+  overflow-y: auto; /* Allow scrolling if content overflows */
+  box-sizing: border-box;
+  perspective: 1000px;
+}
+
+.container {
+  text-align: center;
+  margin: 20px;
+  padding: 20px;
+  transform-style: preserve-3d;
+  animation: fadeIn 1s ease-out;
+  width: 100%; /* Ensure container takes full width for better centering */
+  max-width: 400px; /* Max width for a cleaner layout in extension */
+}
+
+.clock {
+  position: relative;
+  width: 250px;
+  height: 250px;
+  border: 8px solid #fff;
+  border-radius: 50%;
+  margin: 0 auto;
+  background: radial-gradient(circle, #111, #444);
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.6),
+    inset 0 0 10px rgba(255, 255, 255, 0.1);
+  transition: transform 0.5s ease;
+}
+.clock:hover {
+  transform: translateZ(20px) scale(1.04); /* Scale and bring slightly forward on hover */
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35),
+    0 0 40px 5px rgba(255, 255, 255, 0.08) inset;
+  background: radial-gradient(circle at 60% 35%, #222 70%, #444 100%);
+  /* Keep transitions from your original hover */
+  transition: transform 0.5s cubic-bezier(0.25, 0.8, 0.25, 1),
+    box-shadow 0.5s cubic-bezier(0.25, 0.8, 0.25, 1),
+    background 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+.numbers span {
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  text-align: center;
+  line-height: 30px;
+  color: white;
+  font-weight: bold;
+  font-size: 16px;
+  left: 45%;
+  top: 45%;
+  /* Center 12 at the top, 3 at right, 6 at bottom, 9 at left */
+  transform: rotate(calc(30deg * (var(--n) - 3))) translate(100px)
+    rotate(calc(-30deg * (var(--n) - 3)));
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.7);
+  transition: transform 0.3s ease;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.3);
+}
+
+.hand {
+  /* Added this general rule for hand styles as it was missing */
+  position: absolute;
+  bottom: 50%;
+  left: 50%;
+  transform: translate(-50%, 0); /* Center the hand base at the clock center */
+  transform-origin: bottom center;
+  background: white;
+  border-radius: 3px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+}
+
+.hour {
+  width: 6px;
+  height: 60px;
+  z-index: 3;
+  background: #fff;
+}
+
+.minute {
+  width: 4px;
+  height: 85px;
+  z-index: 2;
+  background: #ccc;
+}
+
+.second {
+  width: 2px;
+  height: 95px;
+  background: red;
+  z-index: 1;
+  /* Removed pulseSecond animation here, requestAnimationFrame handles smoothness */
+}
+
+.center-dot {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  background: #fff;
+  border-radius: 50%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 4;
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
+}
+
+.num {
+  font-size: 80px;
+  font-weight: bold;
+  color: #ffcc00;
+  margin-top: 60px;
+  padding: 15px;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+  display: inline-block;
+  transition: transform 0.3s ease, color 0.3s ease;
+  transform: translateY(0);
+  background-color: rgba(255, 255, 255, 0.15);
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  animation: slideInFromTop 0.8s ease-out;
+  width: 100%;
+  max-width: 350px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.num:hover {
+  transform: translateY(-3px);
+  color: #ffe066;
+  box-shadow: 0 0 15px rgba(255, 204, 0, 0.7);
+}
+
+/* Weather Container Styles */
+.weather-container {
+  margin-top: 25px;
+  background-color: rgba(255, 255, 255, 0.15);
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  animation: slideInFromTop 0.8s ease-out;
+  width: 100%;
+  max-width: 350px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.weather-container h3 {
+  margin-top: 0;
+  color: #ffcc00;
+}
+
+#weather-info {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap; /* Allow wrapping on smaller screens */
+}
+
+#weather-icon {
+  width: 50px;
+  height: 50px;
+}
+.weather-container:hover {
+  transform: translateY(-3px);
+  color: #ffe066;
+  box-shadow: 0 0 15px rgba(255, 204, 0, 0.7);
+}
+
+.calendar-container {
+  margin-top: 25px;
+  background-color: rgba(255, 255, 255, 0.15);
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  animation: slideInFromTop 0.8s ease-out;
+  width: 100%;
+  max-width: 350px; /* Limit calendar width for better appearance */
+  margin-left: auto;
+  margin-right: auto;
+}
+.calendar-container:hover {
+  transform: translateY(-3px);
+  color: #ffe066;
+  box-shadow: 0 0 15px rgba(255, 204, 0, 0.7);
+}
+
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.nav-button {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 24px;
+  cursor: pointer;
+  padding: 5px 10px;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+
+.nav-button:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+#monthYear {
+  flex-grow: 1;
+  text-align: center;
+}
+
+
+.calendar-grid-header,
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 5px;
+  font-size: 14px;
+}
+
+.calendar-grid-header span {
+  font-weight: bold;
+  color: #ffcc00;
+}
+
+.calendar-grid div {
+  padding: 8px 0;
+  border-radius: 5px;
+  background-color: rgba(255, 255, 255, 0.05);
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.calendar-grid div:hover:not(.empty-day):not(.today) {
+  background-color: rgba(255, 255, 255, 0.15);
+}
+
+.calendar-grid .empty-day {
+  background-color: transparent;
+  cursor: default;
+}
+
+.calendar-grid .today {
+  background-color: #ffcc00;
+  color: #333;
+  font-weight: bold;
+}
+
+.world-time {
+  margin-top: 25px;
+  font-size: 15px;
+  text-align: left;
+  background-color: rgba(255, 255, 255, 0.15);
+  padding: 12px 15px;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  animation: slideInFromBottom 1s ease-out;
+  width: 100%;
+  max-width: 350px; /* Limit world time width */
+  margin-left: auto;
+  margin-right: auto;
+}
+.world-time:hover {
+  transform: translateY(-3px);
+  color: #ffe066;
+  box-shadow: 0 0 15px rgba(255, 204, 0, 0.7);
+}
+
+.world-time div {
+  margin-bottom: 8px;
+}
+
+.world-time b {
+  color: #ffcc00;
+}
+
+/* Keyframe Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInFromTop {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInFromBottom {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.link {
+  display: inline-block;
+  margin-top: 20px;
+  font-size: 10px;
+  color: #ffcc00;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.link:hover {
+  color: #ffe066;
+}
+.countup-container {
+  margin-top: 20px;
+  text-align: center;
+  font-weight: bold;
+  background-color: rgba(255, 255, 255, 0.15);
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  animation: slideInFromTop 0.8s ease-out;
+  width: 100%;
+  max-width: 350px; /* Limit countup width for better appearance */
+  margin-left: auto;
+  margin-right: auto;
+}
+.countup-container h3 {
+  font-family: 'BitcountProp', sans-serif;
+  margin-top: 0;
+  color: #ffcc00;
+  font-size: 20px;
+  font-weight: bold;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+.countup-container:hover {
+  transform: translateY(-3px);
+  color: #ffe066;
+  box-shadow: 0 0 15px rgba(255, 204, 0, 0.7);
+}
+
+.countup-container button {
+  margin: 5px;
+  padding: 6px 12px;
+  font-weight: bold;
+  cursor: pointer;
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #ffcc00;
+  border: none;
+  border-radius: 5px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  font-size: 14px;
+  width: 100px; /* Fixed width for buttons */
+  display: inline-block; /* Ensure buttons are inline */
+  text-align: center;
+  line-height: 1.5; /* Center text vertically */
+  margin-top: 10px; /* Add some space above buttons */
+  margin-bottom: 10px; /* Add some space below buttons */
+}
+.countup-container button:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+  color: #ffe066;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  transform: translateY(-2px); /* Slight lift effect on hover */
+  transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease,
+    transform 0.1s ease;
+}
+
+/* Removed pulseSecond because requestAnimationFrame handles smooth movement */
+
+/* Alarm Container Styles */
+.alarm-container {
+  margin-top: 20px;
+  text-align: center;
+  font-weight: bold;
+  background-color: rgba(255, 255, 255, 0.15);
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  animation: slideInFromTop 0.8s ease-out;
+  width: 100%;
+  max-width: 350px; /* Limit countup width for better appearance */
+  margin-left: auto;
+  margin-right: auto;
+}
+.alarm-container:hover {
+  transform: translateY(-3px);
+  color: #ffe066;
+  box-shadow: 0 0 15px rgba(255, 204, 0, 0.7);
+}
+
+.alarm-container h3 {
+  font-family: 'BitcountProp', sans-serif;
+  margin-top: 0;
+  color: #ffcc00;
+  font-size: 20px;
+  font-weight: bold;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+
+.alarm-container input[type='time'] {
+  background: rgba(255, 255, 255, 0.9);
+  border: none;
+  border-radius: 8px;
+  padding: 10px;
+  margin: 10px 0;
+  font-size: 16px;
+  color: #333;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  
+}
+
+.alarm-container input[type='time']:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1);
+  transform: translateY(-2px);
+}
+
+.alarm-container select {
+  background: rgba(255, 255, 255, 0.9);
+  border: none;
+  border-radius: 8px;
+  padding: 10px;
+  margin: 10px 0;
+  font-size: 16px;
+  color: #333;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.alarm-container select:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.3);
+}
+
+.alarm-container button {
+  margin: 5px;
+  padding: 6px 12px;
+  font-weight: bold;
+  cursor: pointer;
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #ffcc00;
+  border: none;
+  border-radius: 5px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  font-size: 14px;
+  width: 100px; /* Fixed width for buttons */
+  display: inline-block; /* Ensure buttons are inline */
+  text-align: center;
+  line-height: 1.5; /* Center text vertically */
+  margin-top: 10px; /* Add some space above buttons */
+  margin-bottom: 10px; /* Add some space below buttons */
+}
+
+.alarm-container button:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+  color: #ffe066;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  transform: translateY(-2px); /* Slight lift effect on hover */
+  transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease,
+    transform 0.1s ease;
+}
+
+.alarm-container button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+#currentAlarms {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+#alarmsList {
+  text-align: left;
+}
+
+#alarmsList > div {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  padding: 15px;
+  margin: 10px 0;
+  backdrop-filter: blur(5px);
+  transition: all 0.3s ease;
+}
+
+#alarmsList > div:hover {
+  background: rgba(255, 255, 255, 0.15);
+  transform: translateX(5px);
+}
+
+#alarmsList button {
+  background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+#alarmsList button:hover {
+  background: linear-gradient(135deg, #ff5252 0%, #e53e3e 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+#alarmsList button:active {
+  transform: translateY(0);
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);
+}
+
+/* Time Format Selection */
+.time-format {
+  margin: 15px 0;
+  text-align: center;
+}
+
+.time-format label {
+  display: inline-block;
+  margin: 0 10px;
+  padding: 8px 15px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.time-format label:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+}
+
+.time-format input[type='radio'] {
+  margin-right: 8px;
+  accent-color: #ffcc00;
+}
+
+.time-format input[type='radio']:checked + span {
+  color: #ffcc00;
+}
+
+/* Repeat Options */
+.repeat-options {
+  margin: 20px 0;
+  padding: 15px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.day-checkboxes {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+  gap: 8px;
+  margin-bottom: 15px;
+}
+
+.day-checkboxes label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  font-size: 12px;
+  text-align: center;
+}
+
+.day-checkboxes label:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-1px);
+}
+
+.day-checkboxes input[type='checkbox'] {
+  margin-right: 5px;
+  accent-color: #ffcc00;
+}
+
+.day-checkboxes input[type='checkbox']:checked + span {
+  color: #ffcc00;
+  font-weight: bold;
+}
+
+.repeat-options label:last-child {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.repeat-options label:last-child:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.repeat-options input[type='checkbox'] {
+  margin-right: 8px;
+  accent-color: #ffcc00;
+}
+
+/* AM/PM Selector */
+#ampmSelector {
+  margin-top: 10px;
+  text-align: center;
+}
+
+#ampmSelector label {
+  display: inline-block;
+  margin-right: 10px;
+  color: #fff;
+  font-weight: bold;
+}
+
+#ampmSelector select {
+  background: rgba(255, 255, 255, 0.9);
+  border: none;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 14px;
+  color: #333;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+#ampmSelector select:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.3);
+}
+
+/* Improve alarm container spacing */
+.alarm-container > * {
+  margin-bottom: 15px;
+}
+
+.alarm-container > *:last-child {
+  margin-bottom: 0;
+}
+
+/* Responsive design for day checkboxes */
+@media (max-width: 400px) {
+  .day-checkboxes {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .time-format label {
+    display: block;
+    margin: 5px 0;
+  }
+}
+.https-warning{
+  margin-top: 20px;
+  text-align: center;
+  font-weight: bold;
+  background-color: rgba(255, 255, 255, 0.15);
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  animation: slideInFromTop 0.8s ease-out;
+  width: 100%;
+  max-width: 350px; /* Limit countup width for better appearance */
+  margin-left: auto;
+  margin-right: auto;
+}
+.https-warning h3 {
+  font-family: 'BitcountProp', sans-serif;
+  margin-top: 0;
+  color: #ffcc00;
+  font-size: 20px;
+  font-weight: bold;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+.https-warning:hover {
+  transform: translateY(-3px);
+  color: #ffe066;
+  box-shadow: 0 0 15px rgba(255, 204, 0, 0.7);
+}
+
+.https-warning button {
+  margin: 5px;
+  padding: 6px 12px;
+  font-weight: bold;
+  cursor: pointer;
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #ffcc00;
+  border: none;
+  border-radius: 5px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  font-size: 14px;
+  width: 100px; /* Fixed width for buttons */
+  display: inline-block; /* Ensure buttons are inline */
+  text-align: center;
+  line-height: 1.5; /* Center text vertically */
+  margin-top: 10px; /* Add some space above buttons */
+  margin-bottom: 10px; /* Add some space below buttons */
+}
+
+.https-warning button:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+  color: #ffe066;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  transform: translateY(-2px); /* Slight lift effect on hover */
+  transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.https-warning button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}

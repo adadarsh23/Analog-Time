@@ -1,0 +1,26 @@
+{
+  "extension_title": "Analog Clock Extension",
+  "developer": {
+    "name": "Ad Adarsh",
+    "email": "adrajpu523@gmail.com",
+    "website": "https://github.com/adadarsh23"
+  },
+  "features": [
+    "Analog clock with real-time sync",
+    "Weather",
+    "Calendar overlay",
+    "Multi-country timezone support",
+    "Countdown support",
+    "Alarm support",
+    "HTTP Protected",
+    "Privacy-friendly (no tracking)",
+    "Offline-ready"
+  ],
+  "build_info": {
+    "version": "1.2.0",
+    "last_updated": "2025-08-02",
+    "icons_used": "icons8",
+    "font_used": "BitcountPropSingle"
+  },
+  "notes": "For internal reference only; not part of the Chrome extension manifest."
+}

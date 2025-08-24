@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Welcome</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    @font-face {
+      font-family: 'BitcountProp';
+      src: url('font/BitcountPropSingle_Cursive-Bold.ttf') format('truetype');
+      font-weight: 100 900;
+      font-style: normal;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'BitcountProp', sans-serif;
+      background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      text-align: center;
+      padding: 20px;
+    }
+
+    .icon {
+      width: 100px;
+      margin-bottom: 20px;
+      transition: transform 0.3s;
+    }
+
+    .icon:hover {
+      transform: scale(1.2);
+    }
+
+    h1 {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+    }
+
+    p {
+      font-size: 1.2rem;
+      margin-bottom: 1rem;
+    }
+
+    .instructions {
+      font-size: 0.95rem;
+      opacity: 0.85;
+      max-width: 400px;
+      margin-bottom: 30px;
+    }
+
+    .features {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+      margin-top: 20px;
+    }
+
+    .feature {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 15px 20px;
+      border-radius: 10px;
+      width: 120px;
+      text-align: center;
+      transition: background 0.3s, transform 0.3s;
+    }
+
+    .feature:hover {
+      background: rgba(255, 255, 255, 0.2);
+      transform: translateY(-5px);
+    }
+
+    .feature img {
+      width: 50px;
+      margin-bottom: 10px;
+    }
+
+    .feature p {
+      font-size: 0.9rem;
+      margin: 0;
+    }
+
+    @media(max-width:500px){
+      .features {
+        flex-direction: column;
+        gap: 15px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <img class="icon" src="icons/icons8-time-80.png" alt="Clock Icon" />
+  <h1>Welcome to Analog Clock Extension</h1>
+  <p>Track time, weather, calendar, alarms, countdowns, and stay secure with HTTP protection!</p>
+  <p class="instructions">Click the extension icon in your browser toolbar to open the clock anytime.</p>
+
+  <div class="features">
+    <div class="feature">
+      <img src="icons-img/clock.png" alt="Clock" />
+      <p>Live Clock</p>
+    </div>
+    <div class="feature">
+      <img src="icons-img/calendar.png" alt="Calendar" />
+      <p>Calendar</p>
+    </div>
+    <div class="feature">
+      <img src="icons-img/alarm-clock.png" alt="Alarm" />
+      <p>Alarm</p>
+    </div>
+    <div class="feature">
+      <img src="icons-img/countdown.png" alt="Countdown" />
+      <p>Countdown</p>
+    </div>
+    <div class="feature">
+      <img src="icons-img/cloudy-day.png" alt="Weather" />
+      <p>Weather</p>
+    </div>
+    <div class="feature">
+      <img src="icons-img/http.png" alt="HTTPS" />
+      <p>HTTPS Protected</p>
+    </div>
+  </div>
+</body>
+
+</html>
