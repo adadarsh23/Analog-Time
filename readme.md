@@ -65,7 +65,6 @@ A modern, feature-rich analog clock extension for browsers with world time, cale
 ```bash
 # Clone the repository
 git clone https://github.com/adadarsh23/Analog-Time
-cd analog-clock-extension-1.2.0
 
 # Install dependencies (if any)
 npm install
